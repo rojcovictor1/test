@@ -1,1 +1,1 @@
-# test
+# test application in DRF
