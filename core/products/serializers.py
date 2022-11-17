@@ -5,7 +5,6 @@ from .models import Product, ProductImage
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = ProductImage
         fields = ['id', 'product', 'image']
@@ -14,8 +13,11 @@ class ProductImageSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer[Product]):
     images = ProductImageSerializer(many=True, read_only=True)
     uploaded_images = serializers.ListField(
-        child=serializers.ImageField(max_length=1000000, allow_empty_file=False,
-                                     use_url=False), write_only=True
+        child=serializers.ImageField(
+            max_length=1000000,
+            allow_empty_file=False,
+            use_url=False),
+        write_only=True
     )
 
     def to_representation(self, instance):
@@ -41,9 +43,5 @@ class ProductSerializer(serializers.ModelSerializer[Product]):
         uploaded_images = validated_data.pop('uploaded_images')
         product = Product.objects.create(**validated_data)
         for image in uploaded_images:
-            product_image = ProductImage.objects.create(product=product, image=image)
-
+            ProductImage.objects.create(product=product, image=image)
         return product
-
-
-
